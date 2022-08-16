@@ -108,6 +108,9 @@ gce_vm_template <- function(template = c("rstudio",
   } else {
     # creates cloud-config file that will call the startup script
     cloud_init_file <- read_cloud_init_file(template)
+    cloud_init_file <- gsub(
+      '{{username}}', username, cloud_init_file, fixed = TRUE
+    )
     startup_script  <- NULL
     image_project   <-  "cos-cloud"
   }

@@ -1,8 +1,7 @@
 #cloud-config
 
 users:
-- name: gcer
-  uid: 2000
+- name: {{username}}
 
 write_files:
 - path: /etc/gcer/startup.sh
@@ -21,7 +20,7 @@ write_files:
     
     [Service]
     Restart=always
-    Environment="HOME=/home/gcer"
+    Environment="HOME=/home/{{username}}"
     ExecStartPre=/usr/bin/docker-credential-gcr configure-docker
     ExecStart=/etc/gcer/startup.sh
     ExecStop=/usr/bin/docker stop rstudio
