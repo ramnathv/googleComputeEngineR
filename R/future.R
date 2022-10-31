@@ -25,6 +25,7 @@
 #' 
 #' }
 gce_vm_cluster <- function(vm_prefix = "r-cluster-",
+                           template = 'r-parallel',
                            cluster_size = 3,
                            docker_image = NULL,
                            ...,
@@ -50,7 +51,7 @@ gce_vm_cluster <- function(vm_prefix = "r-cluster-",
   
   # defaults
   dots$name <- NULL
-  dots$template <- "r-parallel"
+  dots$template <- template
   dots$dynamic_image <- docker_image
   dots$wait <- FALSE
   
