@@ -9,6 +9,7 @@
 #' @param ssh_args A list of optional arguments that will be passed to \link{gce_ssh_setup}
 #' @param project The project to launch the cluster in
 #' @param zone The zone to launch the cluster in
+#' @param test_ssh A boolean indicating if the SSH connection should be tested.
 #' 
 #' @export
 #' @import assertthat
@@ -31,7 +32,8 @@ gce_vm_cluster <- function(vm_prefix = "r-cluster-",
                            ...,
                            ssh_args = NULL,
                            project = gce_get_global_project(), 
-                           zone = gce_get_global_zone()){
+                           zone = gce_get_global_zone(),
+                           test_ssh = TRUE){
   
   assert_that(
     is.string(vm_prefix),
@@ -89,10 +91,14 @@ gce_vm_cluster <- function(vm_prefix = "r-cluster-",
     do.call(gce_ssh_setup, args = ssh_args)
   }) 
   
-  myMessage("# Testing cluster:", level = 3)
-  lapply(vms, function(x){
-    gce_ssh(x, paste("echo", x$name, "ssh working"))
-  })
+  if (test_ssh){
+    myMessage("# Testing cluster:", level = 3)
+    lapply(vms, function(x){
+      gce_ssh(x, paste("echo", x$name, "ssh working"))
+    })
+  } else {
+    myMessage("Skipping testing SSH connection to the cluster")
+  }
   
   vms
   
