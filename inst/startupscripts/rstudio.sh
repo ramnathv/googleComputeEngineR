@@ -42,6 +42,7 @@ docker run -p 80:8787 \
            -e ROOT=TRUE \
            -e USER=$RSTUDIO_USER \
            -e PASSWORD=$RSTUDIO_PW \
+           -e GCER_DOCKER_IMAGE=$GCER_DOCKER_IMAGE \
            -v /home/{{username}}:/home/{{username}} \
            --name=rstudio \
            $GCER_DOCKER_IMAGE
