@@ -35,14 +35,18 @@ cat /etc/ssh/sshd_config
 sudo systemctl restart sshd
 systemctl status sshd
 
-docker run -p 80:8787 \
+
+docker run -p 80:80 \
            -p 22:22 \
-           -p 8080:80 \
+           -p 8787:8787 \
+           -p 443:443 \
            -h $CONTAINER_HOSTNAME \
            -e ROOT=TRUE \
            -e USER=$RSTUDIO_USER \
            -e PASSWORD=$RSTUDIO_PW \
            -e GCER_DOCKER_IMAGE=$GCER_DOCKER_IMAGE \
            -v /home/{{username}}:/home/{{username}} \
+           -v /home/.container/etc/nginx/sites-enabled:/etc/nginx/sites-enabled \
+           -v /home/.container/etc/letsencrypt:/etc/letsencrypt \
            --name=rstudio \
            $GCER_DOCKER_IMAGE
