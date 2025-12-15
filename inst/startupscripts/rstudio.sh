@@ -25,7 +25,7 @@ cat /etc/ssh/sshd_config
 echo "Modifying $SSH_CONF_FILE"
 if grep -q "Port [[:digit:]]*" $SSH_CONF_FILE; then
     # If a Port directive is already specified in the ssh conf file, change that line.
-    sed -i 's/Port [[:digit:]]*/Port 2222/g' hello
+    sed -i 's/Port [[:digit:]]*/Port 2222/g' $SSH_CONF_FILE
 else
     # Otherwise, append a new Port directive
     echo "Port 2222" >> $SSH_CONF_FILE
@@ -35,18 +35,26 @@ cat /etc/ssh/sshd_config
 sudo systemctl restart sshd
 systemctl status sshd
 
+# -----------------------------
+# Create named volumes
+# -----------------------------
+docker volume create rstudio_home
+docker volume create letsencrypt-data
+docker volume create nginx-config
 
+# -----------------------------
+# Start RStudio container
+# -----------------------------
 docker run -p 80:80 \
            -p 22:22 \
            -p 8787:8787 \
            -p 443:443 \
            -h $CONTAINER_HOSTNAME \
            -e ROOT=TRUE \
-           -e USER=$RSTUDIO_USER \
            -e PASSWORD=$RSTUDIO_PW \
            -e GCER_DOCKER_IMAGE=$GCER_DOCKER_IMAGE \
-           -v /home/{{username}}:/home/{{username}} \
-           -v /home/.container/etc/nginx/sites-enabled:/etc/nginx/sites-enabled \
-           -v /home/.container/etc/letsencrypt:/etc/letsencrypt \
+           -v rstudio_home:/home/rstudio \
+           -v letsencrypt-data:/etc/letsencrypt \
+           -v nginx-config:/etc/nginx/sites-enabled \
            --name=rstudio \
            $GCER_DOCKER_IMAGE
